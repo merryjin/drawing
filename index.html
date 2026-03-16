@@ -13,184 +13,116 @@
 </head>
 <body>
 <p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p2"><br></p>
 <p class="p1">&lt;html lang="ko"&gt;</p>
-<p class="p2"><br></p>
 <p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1">&lt;title&gt;Pattern Preview Tool&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Pattern Viewer Pro&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--bg-size: 200px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body, html {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Pretendard', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
 <p class="p2"><br></p>
-<p class="p1">body{</p>
-<p class="p1">margin:0;</p>
-<p class="p1">font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;</p>
-<p class="p1">background:#f5f5f5;</p>
-<p class="p1">}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* 패턴이 적용될 배경 레이어 */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#pattern-background {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-repeat: repeat;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-size: var(--bg-size);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: -1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f0f0f0; /* 기본 배경색 */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
 <p class="p2"><br></p>
-<p class="p1">header{</p>
-<p class="p1">text-align:center;</p>
-<p class="p1">padding:20px;</p>
-<p class="p1">background:white;</p>
-<p class="p1">border-bottom:1px solid #ddd;</p>
-<p class="p1">}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* 컨트롤 패널 UI */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.control-panel {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>left: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.9);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 15px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(5px);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 250px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
 <p class="p2"><br></p>
-<p class="p1">.container{</p>
-<p class="p1">max-width:1000px;</p>
-<p class="p1">margin:auto;</p>
-<p class="p1">padding:30px;</p>
-<p class="p1">}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h2 { margin-top: 0; font-size: 18px; color: #333; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.control-group { margin-bottom: 15px; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>label { display: block; font-size: 13px; margin-bottom: 5px; color: #666; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>input[type="file"] { width: 100%; font-size: 12px; }</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>input[type="range"] {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
 <p class="p2"><br></p>
-<p class="p1">.drop-area{</p>
-<p class="p1">border:2px dashed #bbb;</p>
-<p class="p1">height:150px;</p>
-<p class="p1">display:flex;</p>
-<p class="p1">align-items:center;</p>
-<p class="p1">justify-content:center;</p>
-<p class="p1">background:white;</p>
-<p class="p1">color:#666;</p>
-<p class="p1">cursor:pointer;</p>
-<p class="p1">margin-bottom:20px;</p>
-<p class="p1">transition:0.2s;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.drop-area.dragover{</p>
-<p class="p1">border-color:#333;</p>
-<p class="p1">background:#fafafa;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.controls{</p>
-<p class="p1">display:flex;</p>
-<p class="p1">gap:20px;</p>
-<p class="p1">margin-bottom:20px;</p>
-<p class="p1">flex-wrap:wrap;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">.preview{</p>
-<p class="p1">height:500px;</p>
-<p class="p1">border:1px solid #ddd;</p>
-<p class="p1">background:white;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">input[type="range"]{</p>
-<p class="p1">width:200px;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-text {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 11px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #888;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
 <p class="p1">&lt;/head&gt;</p>
-<p class="p2"><br></p>
 <p class="p1">&lt;body&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;header&gt;</p>
-<p class="p1">&lt;h2&gt;Pattern Preview&lt;/h2&gt;</p>
-<p class="p1">&lt;p&gt;이미지를 드래그하거나 클릭해서 업로드&lt;/p&gt;</p>
-<p class="p1">&lt;/header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="pattern-background"&gt;&lt;/div&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="control-panel"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;Pattern Preview&lt;/h2&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="upload"&gt;1. 패턴 이미지 업로드 (PNG/JPG)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="file" id="upload" accept="image/*"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;div class="drop-area" id="dropArea"&gt;</p>
-<p class="p1">패턴 이미지를 드래그하거나 클릭하세요</p>
-<p class="p1">&lt;input type="file" id="fileInput" accept="image/*" hidden&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="control-group"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="scale"&gt;2. 패턴 크기 조절: &lt;span id="scale-val"&gt;200&lt;/span&gt;px&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="range" id="scale" min="10" max="1000" value="200"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;div class="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="status-text"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>* 포토샵에서 저장한 패턴 이미지를 넣어보세요.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;label&gt;</p>
-<p class="p1">Pattern Size</p>
-<p class="p1">&lt;br&gt;</p>
-<p class="p1">&lt;input type="range" id="scaleSlider" min="20" max="400" value="100"&gt;</p>
-<p class="p1">&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const uploadInput = document.getElementById('upload');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const scaleInput = document.getElementById('scale');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const scaleVal = document.getElementById('scale-val');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const bgLayer = document.getElementById('pattern-background');</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;label&gt;</p>
-<p class="p1">Background</p>
-<p class="p1">&lt;br&gt;</p>
-<p class="p1">&lt;input type="color" id="bgColor" value="#ffffff"&gt;</p>
-<p class="p1">&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 1. 이미지 업로드 처리</p>
+<p class="p1"><span class="Apple-converted-space">        </span>uploadInput.addEventListener('change', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const file = e.target.files[0];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (file) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const reader = new FileReader();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>reader.onload = function(event) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>bgLayer.style.backgroundImage = `url('${event.target.result}')`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>};</p>
+<p class="p1"><span class="Apple-converted-space">                </span>reader.readAsDataURL(file);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
 <p class="p2"><br></p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="preview" id="preview"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">const dropArea = document.getElementById("dropArea")</p>
-<p class="p1">const fileInput = document.getElementById("fileInput")</p>
-<p class="p1">const preview = document.getElementById("preview")</p>
-<p class="p1">const scaleSlider = document.getElementById("scaleSlider")</p>
-<p class="p1">const bgColor = document.getElementById("bgColor")</p>
-<p class="p2"><br></p>
-<p class="p1">let currentImage = null</p>
-<p class="p2"><br></p>
-<p class="p1">dropArea.addEventListener("click",()=&gt;{</p>
-<p class="p1">fileInput.click()</p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">fileInput.addEventListener("change",(e)=&gt;{</p>
-<p class="p1">handleFile(e.target.files[0])</p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">dropArea.addEventListener("dragover",(e)=&gt;{</p>
-<p class="p1">e.preventDefault()</p>
-<p class="p1">dropArea.classList.add("dragover")</p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">dropArea.addEventListener("dragleave",()=&gt;{</p>
-<p class="p1">dropArea.classList.remove("dragover")</p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">dropArea.addEventListener("drop",(e)=&gt;{</p>
-<p class="p1">e.preventDefault()</p>
-<p class="p1">dropArea.classList.remove("dragover")</p>
-<p class="p2"><br></p>
-<p class="p1">const file = e.dataTransfer.files[0]</p>
-<p class="p1">handleFile(file)</p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">function handleFile(file){</p>
-<p class="p2"><br></p>
-<p class="p1">if(!file) return</p>
-<p class="p2"><br></p>
-<p class="p1">if(!file.type.startsWith("image")){</p>
-<p class="p1">alert("이미지 파일만 업로드 가능합니다")</p>
-<p class="p1">return</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">const reader = new FileReader()</p>
-<p class="p2"><br></p>
-<p class="p1">reader.onload = function(e){</p>
-<p class="p2"><br></p>
-<p class="p1">currentImage = e.target.result</p>
-<p class="p2"><br></p>
-<p class="p1">preview.style.backgroundImage = `url(${currentImage})`</p>
-<p class="p1">preview.style.backgroundRepeat = "repeat"</p>
-<p class="p1">preview.style.backgroundSize = scaleSlider.value + "px"</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">reader.readAsDataURL(file)</p>
-<p class="p2"><br></p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">scaleSlider.addEventListener("input",()=&gt;{</p>
-<p class="p2"><br></p>
-<p class="p1">if(currentImage){</p>
-<p class="p1">preview.style.backgroundSize = scaleSlider.value + "px"</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">bgColor.addEventListener("input",()=&gt;{</p>
-<p class="p2"><br></p>
-<p class="p1">preview.style.backgroundColor = bgColor.value</p>
-<p class="p2"><br></p>
-<p class="p1">})</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 2. 슬라이더 크기 조절 처리</p>
+<p class="p1"><span class="Apple-converted-space">        </span>scaleInput.addEventListener('input', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const size = e.target.value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>scaleVal.textContent = size;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.documentElement.style.setProperty('--bg-size', `${size}px`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
 <p class="p1">&lt;/body&gt;</p>
 <p class="p1">&lt;/html&gt;</p>
 </body>
