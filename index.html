@@ -4,11 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pattern Lab</title>
+<title>Pattern Lab v2</title>
 
 <style>
 
-body,html{
+html,body{
 margin:0;
 height:100%;
 font-family:-apple-system,BlinkMacSystemFont,system-ui;
@@ -16,20 +16,29 @@ background:#ddd;
 overflow:hidden;
 }
 
-/* 패턴 배경 */
-
-#pattern{
+#canvas{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
+background:#ddd;
 background-repeat:repeat;
-background-size:200px;
-background-color:#ddd;
 }
 
-/* 드롭 안내 */
+#grid{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+background-image:
+linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+background-size:200px 200px;
+display:none;
+}
 
 #drop{
 position:fixed;
@@ -40,24 +49,51 @@ height:100%;
 display:flex;
 align-items:center;
 justify-content:center;
-border:4px dashed rgba(0,0,0,0.15);
-background:rgba(255,255,255,0.3);
+border:4px dashed rgba(0,0,0,0.2);
 font-weight:600;
 color:#555;
-z-index:10;
+background:rgba(255,255,255,0.3);
 }
-
-/* 패널 */
 
 .panel{
 position:fixed;
 top:20px;
 left:20px;
+width:260px;
 background:white;
 padding:20px;
-border-radius:12px;
+border-radius:14px;
 box-shadow:0 10px 30px rgba(0,0,0,0.15);
-z-index:100;
+}
+
+.panel h2{
+margin:0 0 15px;
+font-size:18px;
+}
+
+.control{
+margin-bottom:14px;
+}
+
+label{
+font-size:12px;
+font-weight:600;
+display:block;
+margin-bottom:5px;
+}
+
+input[type=range]{
+width:100%;
+}
+
+button{
+margin-top:5px;
+padding:8px 12px;
+border:none;
+border-radius:6px;
+background:#333;
+color:white;
+cursor:pointer;
 }
 
 </style>
@@ -66,27 +102,69 @@ z-index:100;
 
 <body>
 
-<div id="pattern"></div>
+<div id="canvas"></div>
+<div id="grid"></div>
 
 <div id="drop">
-패턴 이미지를 드래그하세요
+패턴 이미지를 드래그하거나 클릭하세요
+<input type="file" id="file" hidden accept="image/*">
 </div>
 
 <div class="panel">
 
-<label>Scale</label> <br> <input type="range" id="scale" min="20" max="1000" value="200">
+<h2>Pattern Lab v2</h2>
+
+<div class="control">
+<label>Scale</label>
+<input type="range" id="scale" min="20" max="1000" value="200">
+</div>
+
+<div class="control">
+<label>Rotation</label>
+<input type="range" id="rotate" min="0" max="360" value="0">
+</div>
+
+<div class="control">
+<label>Offset X</label>
+<input type="range" id="offsetX" min="0" max="500" value="0">
+</div>
+
+<div class="control">
+<label>Offset Y</label>
+<input type="range" id="offsetY" min="0" max="500" value="0">
+</div>
+
+<div class="control">
+<label>Background</label>
+<input type="color" id="bg" value="#dddddd">
+</div>
+
+<div class="control">
+<button id="gridBtn">Grid Toggle</button>
+</div>
+
+<div class="control">
+<button id="export">Export PNG</button>
+</div>
 
 </div>
 
 <script>
 
-const pattern=document.getElementById("pattern")
+const canvas=document.getElementById("canvas")
 const drop=document.getElementById("drop")
+const fileInput=document.getElementById("file")
+const grid=document.getElementById("grid")
+
 const scale=document.getElementById("scale")
+const rotate=document.getElementById("rotate")
+const offsetX=document.getElementById("offsetX")
+const offsetY=document.getElementById("offsetY")
+const bg=document.getElementById("bg")
 
-let image=null
+let img=null
 
-/* 드래그 기본동작 방지 */
+/* drag 방지 */
 
 ;["dragenter","dragover","dragleave","drop"].forEach(e=>{
 document.addEventListener(e,ev=>{
@@ -94,28 +172,30 @@ ev.preventDefault()
 })
 })
 
-/* 드롭 */
+drop.addEventListener("click",()=>{
+fileInput.click()
+})
+
+fileInput.addEventListener("change",e=>{
+loadFile(e.target.files[0])
+})
 
 document.addEventListener("drop",e=>{
+loadFile(e.dataTransfer.files[0])
+})
 
-const file=e.dataTransfer.files[0]
+function loadFile(file){
 
 if(!file) return
-
-if(!file.type.startsWith("image")){
-alert("이미지 파일만 가능합니다")
-return
-}
+if(!file.type.startsWith("image")) return
 
 const reader=new FileReader()
 
-reader.onload=function(ev){
+reader.onload=function(e){
 
-image=ev.target.result
+img=e.target.result
 
-pattern.style.backgroundImage=`url(${image})`
-pattern.style.backgroundRepeat="repeat"
-pattern.style.backgroundSize=scale.value+"px"
+updatePattern()
 
 drop.style.display="none"
 
@@ -123,19 +203,49 @@ drop.style.display="none"
 
 reader.readAsDataURL(file)
 
-})
-
-/* 스케일 */
-
-scale.addEventListener("input",()=>{
-
-if(image){
-pattern.style.backgroundSize=scale.value+"px"
 }
 
+function updatePattern(){
+
+if(!img) return
+
+canvas.style.backgroundImage=`url(${img})`
+canvas.style.backgroundSize=scale.value+"px"
+canvas.style.backgroundPosition=offsetX.value+"px "+offsetY.value+"px"
+
+canvas.style.transform=`rotate(${rotate.value}deg)`
+
+grid.style.backgroundSize=scale.value+"px "+scale.value+"px"
+
+}
+
+scale.oninput=updatePattern
+rotate.oninput=updatePattern
+offsetX.oninput=updatePattern
+offsetY.oninput=updatePattern
+
+bg.oninput=()=>{
+canvas.style.backgroundColor=bg.value
+}
+
+document.getElementById("gridBtn").onclick=()=>{
+grid.style.display=grid.style.display=="none"?"block":"none"
+}
+
+document.getElementById("export").onclick=()=>{
+
+html2canvas(document.body).then(canvas=>{
+const link=document.createElement("a")
+link.download="pattern.png"
+link.href=canvas.toDataURL()
+link.click()
 })
 
+}
+
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </body>
 </html>
