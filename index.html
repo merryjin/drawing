@@ -1,251 +1,232 @@
-<!DOCTYPE html>
-
-<html lang="ko">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pattern Lab v2</title>
-
-<style>
-
-html,body{
-margin:0;
-height:100%;
-font-family:-apple-system,BlinkMacSystemFont,system-ui;
-background:#ddd;
-overflow:hidden;
-}
-
-#canvas{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#ddd;
-background-repeat:repeat;
-}
-
-#grid{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-background-image:
-linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-background-size:200px 200px;
-display:none;
-}
-
-#drop{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-display:flex;
-align-items:center;
-justify-content:center;
-border:4px dashed rgba(0,0,0,0.2);
-font-weight:600;
-color:#555;
-background:rgba(255,255,255,0.3);
-}
-
-.panel{
-position:fixed;
-top:20px;
-left:20px;
-width:260px;
-background:white;
-padding:20px;
-border-radius:14px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
-
-.panel h2{
-margin:0 0 15px;
-font-size:18px;
-}
-
-.control{
-margin-bottom:14px;
-}
-
-label{
-font-size:12px;
-font-weight:600;
-display:block;
-margin-bottom:5px;
-}
-
-input[type=range]{
-width:100%;
-}
-
-button{
-margin-top:5px;
-padding:8px 12px;
-border:none;
-border-radius:6px;
-background:#333;
-color:white;
-cursor:pointer;
-}
-
-</style>
-
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
 </head>
-
 <body>
-
-<div id="canvas"></div>
-<div id="grid"></div>
-
-<div id="drop">
-패턴 이미지를 드래그하거나 클릭하세요
-<input type="file" id="file" hidden accept="image/*">
-</div>
-
-<div class="panel">
-
-<h2>Pattern Lab v2</h2>
-
-<div class="control">
-<label>Scale</label>
-<input type="range" id="scale" min="20" max="1000" value="200">
-</div>
-
-<div class="control">
-<label>Rotation</label>
-<input type="range" id="rotate" min="0" max="360" value="0">
-</div>
-
-<div class="control">
-<label>Offset X</label>
-<input type="range" id="offsetX" min="0" max="500" value="0">
-</div>
-
-<div class="control">
-<label>Offset Y</label>
-<input type="range" id="offsetY" min="0" max="500" value="0">
-</div>
-
-<div class="control">
-<label>Background</label>
-<input type="color" id="bg" value="#dddddd">
-</div>
-
-<div class="control">
-<button id="gridBtn">Grid Toggle</button>
-</div>
-
-<div class="control">
-<button id="export">Export PNG</button>
-</div>
-
-</div>
-
-<script>
-
-const canvas=document.getElementById("canvas")
-const drop=document.getElementById("drop")
-const fileInput=document.getElementById("file")
-const grid=document.getElementById("grid")
-
-const scale=document.getElementById("scale")
-const rotate=document.getElementById("rotate")
-const offsetX=document.getElementById("offsetX")
-const offsetY=document.getElementById("offsetY")
-const bg=document.getElementById("bg")
-
-let img=null
-
-/* drag 방지 */
-
-;["dragenter","dragover","dragleave","drop"].forEach(e=>{
-document.addEventListener(e,ev=>{
-ev.preventDefault()
-})
-})
-
-drop.addEventListener("click",()=>{
-fileInput.click()
-})
-
-fileInput.addEventListener("change",e=>{
-loadFile(e.target.files[0])
-})
-
-document.addEventListener("drop",e=>{
-loadFile(e.dataTransfer.files[0])
-})
-
-function loadFile(file){
-
-if(!file) return
-if(!file.type.startsWith("image")) return
-
-const reader=new FileReader()
-
-reader.onload=function(e){
-
-img=e.target.result
-
-updatePattern()
-
-drop.style.display="none"
-
-}
-
-reader.readAsDataURL(file)
-
-}
-
-function updatePattern(){
-
-if(!img) return
-
-canvas.style.backgroundImage=`url(${img})`
-canvas.style.backgroundSize=scale.value+"px"
-canvas.style.backgroundPosition=offsetX.value+"px "+offsetY.value+"px"
-
-canvas.style.transform=`rotate(${rotate.value}deg)`
-
-grid.style.backgroundSize=scale.value+"px "+scale.value+"px"
-
-}
-
-scale.oninput=updatePattern
-rotate.oninput=updatePattern
-offsetX.oninput=updatePattern
-offsetY.oninput=updatePattern
-
-bg.oninput=()=>{
-canvas.style.backgroundColor=bg.value
-}
-
-document.getElementById("gridBtn").onclick=()=>{
-grid.style.display=grid.style.display=="none"?"block":"none"
-}
-
-document.getElementById("export").onclick=()=>{
-
-html2canvas(document.body).then(canvas=>{
-const link=document.createElement("a")
-link.download="pattern.png"
-link.href=canvas.toDataURL()
-link.click()
-})
-
-}
-
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;html lang="ko"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;title&gt;Pattern Lab v3&lt;/title&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;style&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">html,body{</span></p>
+<p class="p1"><span class="s1">margin:0;</span></p>
+<p class="p1"><span class="s1">height:100%;</span></p>
+<p class="p1"><span class="s1">font-family:-apple-system,BlinkMacSystemFont,system-ui;</span></p>
+<p class="p1"><span class="s1">background:#ddd;</span></p>
+<p class="p1"><span class="s1">overflow:hidden;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">#patternView{</span></p>
+<p class="p1"><span class="s1">position:fixed;</span></p>
+<p class="p1"><span class="s1">top:0;</span></p>
+<p class="p1"><span class="s1">left:0;</span></p>
+<p class="p1"><span class="s1">width:100%;</span></p>
+<p class="p1"><span class="s1">height:100%;</span></p>
+<p class="p1"><span class="s1">background-repeat:repeat;</span></p>
+<p class="p1"><span class="s1">background-color:#ddd;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">#grid{</span></p>
+<p class="p1"><span class="s1">position:fixed;</span></p>
+<p class="p1"><span class="s1">top:0;</span></p>
+<p class="p1"><span class="s1">left:0;</span></p>
+<p class="p1"><span class="s1">width:100%;</span></p>
+<p class="p1"><span class="s1">height:100%;</span></p>
+<p class="p1"><span class="s1">pointer-events:none;</span></p>
+<p class="p1"><span class="s1">background-image:</span></p>
+<p class="p1"><span class="s1">linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),</span></p>
+<p class="p1"><span class="s1">linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);</span></p>
+<p class="p1"><span class="s1">background-size:200px 200px;</span></p>
+<p class="p1"><span class="s1">display:none;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">#dropzone{</span></p>
+<p class="p1"><span class="s1">position:fixed;</span></p>
+<p class="p1"><span class="s1">top:0;</span></p>
+<p class="p1"><span class="s1">left:0;</span></p>
+<p class="p1"><span class="s1">width:100%;</span></p>
+<p class="p1"><span class="s1">height:100%;</span></p>
+<p class="p1"><span class="s1">display:flex;</span></p>
+<p class="p1"><span class="s1">align-items:center;</span></p>
+<p class="p1"><span class="s1">justify-content:center;</span></p>
+<p class="p1"><span class="s1">border:4px dashed rgba(0,0,0,0.2);</span></p>
+<p class="p1"><span class="s1">font-size:20px;</span></p>
+<p class="p1"><span class="s1">font-weight:600;</span></p>
+<p class="p1"><span class="s1">color:#555;</span></p>
+<p class="p1"><span class="s1">background:rgba(255,255,255,0.5);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">#controls{</span></p>
+<p class="p1"><span class="s1">position:fixed;</span></p>
+<p class="p1"><span class="s1">top:20px;</span></p>
+<p class="p1"><span class="s1">left:20px;</span></p>
+<p class="p1"><span class="s1">width:260px;</span></p>
+<p class="p1"><span class="s1">background:white;</span></p>
+<p class="p1"><span class="s1">padding:20px;</span></p>
+<p class="p1"><span class="s1">border-radius:14px;</span></p>
+<p class="p1"><span class="s1">box-shadow:0 10px 30px rgba(0,0,0,0.15);</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">#controls h2{</span></p>
+<p class="p1"><span class="s1">margin:0 0 15px;</span></p>
+<p class="p1"><span class="s1">font-size:18px;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">.control{</span></p>
+<p class="p1"><span class="s1">margin-bottom:12px;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">label{</span></p>
+<p class="p1"><span class="s1">font-size:12px;</span></p>
+<p class="p1"><span class="s1">font-weight:600;</span></p>
+<p class="p1"><span class="s1">display:block;</span></p>
+<p class="p1"><span class="s1">margin-bottom:4px;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">input,select{</span></p>
+<p class="p1"><span class="s1">width:100%;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">button{</span></p>
+<p class="p1"><span class="s1">width:100%;</span></p>
+<p class="p1"><span class="s1">padding:8px;</span></p>
+<p class="p1"><span class="s1">margin-top:6px;</span></p>
+<p class="p1"><span class="s1">border:none;</span></p>
+<p class="p1"><span class="s1">border-radius:6px;</span></p>
+<p class="p1"><span class="s1">background:#333;</span></p>
+<p class="p1"><span class="s1">color:white;</span></p>
+<p class="p1"><span class="s1">cursor:pointer;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;/style&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div id="patternView"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div id="grid"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div id="dropzone"&gt;</span></p>
+<p class="p1"><span class="s1">패턴 이미지를 드래그하거나 클릭하세요</span></p>
+<p class="p1"><span class="s1">&lt;input type="file" id="fileInput" hidden accept="image/*"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div id="controls"&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;h2&gt;Pattern Lab v3&lt;/h2&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Scale&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="range" id="scale" min="50" max="800" value="200"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Rotation&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="range" id="rotation" min="0" max="360" value="0"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Offset X&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="range" id="offsetX" min="0" max="500" value="0"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Offset Y&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="range" id="offsetY" min="0" max="500" value="0"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Repeat Mode&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;select id="repeatMode"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;option value="repeat"&gt;Basic&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1">&lt;option value="repeat-x"&gt;Brick&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1">&lt;option value="repeat-y"&gt;Half Drop&lt;/option&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/select&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="control"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label&gt;Background Color&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="color" id="bgColor" value="#dddddd"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;button id="toggleGrid"&gt;Grid Toggle&lt;/button&gt; &lt;button id="exportBtn"&gt;Export PNG&lt;/button&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"&gt;&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">const view = document.getElementById("patternView")</span></p>
+<p class="p1"><span class="s1">const grid = document.getElementById("grid")</span></p>
+<p class="p1"><span class="s1">const dropzone = document.getElementById("dropzone")</span></p>
+<p class="p1"><span class="s1">const fileInput = document.getElementById("fileInput")</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">const scale = document.getElementById("scale")</span></p>
+<p class="p1"><span class="s1">const rotation = document.getElementById("rotation")</span></p>
+<p class="p1"><span class="s1">const offsetX = document.getElementById("offsetX")</span></p>
+<p class="p1"><span class="s1">const offsetY = document.getElementById("offsetY")</span></p>
+<p class="p1"><span class="s1">const repeatMode = document.getElementById("repeatMode")</span></p>
+<p class="p1"><span class="s1">const bgColor = document.getElementById("bgColor")</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">let imageData = null</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">dropzone.addEventListener("click", () =&gt; fileInput.click())</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">fileInput.addEventListener("change", (e)=&gt;{</span></p>
+<p class="p1"><span class="s1">loadImage(e.target.files[0])</span></p>
+<p class="p1"><span class="s1">})</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">document.addEventListener("dragover",(e)=&gt;{</span></p>
+<p class="p1"><span class="s1">e.preventDefault()</span></p>
+<p class="p1"><span class="s1">})</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">document.addEventListener("drop",(e)=&gt;{</span></p>
+<p class="p1"><span class="s1">e.preventDefault()</span></p>
+<p class="p1"><span class="s1">loadImage(e.dataTransfer.files[0])</span></p>
+<p class="p1"><span class="s1">})</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function loadImage(file){</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">if(!file || !file.type.startsWith("image")) return</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">const reader = new FileReader()</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">reader.onload = function(e){</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">imageData = e.target.result</span></p>
+<p class="p1"><span class="s1">dropzone.style.display="none"</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">updatePattern()</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">reader.readAsDataURL(file)</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function updatePattern(){</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">if(!imageData) return</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">view.style.backgroundImage = `url(${imageData})`</span></p>
+<p class="p1"><span class="s1">view.style.backgroundSize = scale.value+"px"</span></p>
+<p class="p1"><span class="s1">view.style.backgroundPosition = offsetX.value+"px "+off</span></p>
 </body>
 </html>
