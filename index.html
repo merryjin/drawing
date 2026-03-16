@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;html lang="ko"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;Pattern Preview&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">body{</p>
+<p class="p1">margin:0;</p>
+<p class="p1">font-family:Arial, sans-serif;</p>
+<p class="p1">background:#f5f5f5;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">header{</p>
+<p class="p1">padding:20px;</p>
+<p class="p1">text-align:center;</p>
+<p class="p1">background:white;</p>
+<p class="p1">border-bottom:1px solid #ddd;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">h1{</p>
+<p class="p1">margin:0;</p>
+<p class="p1">font-size:22px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.container{</p>
+<p class="p1">padding:30px;</p>
+<p class="p1">max-width:1000px;</p>
+<p class="p1">margin:auto;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.drop-area{</p>
+<p class="p1">border:2px dashed #bbb;</p>
+<p class="p1">height:140px;</p>
+<p class="p1">display:flex;</p>
+<p class="p1">align-items:center;</p>
+<p class="p1">justify-content:center;</p>
+<p class="p1">background:white;</p>
+<p class="p1">color:#777;</p>
+<p class="p1">margin-bottom:20px;</p>
+<p class="p1">cursor:pointer;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.controls{</p>
+<p class="p1">display:flex;</p>
+<p class="p1">gap:20px;</p>
+<p class="p1">align-items:center;</p>
+<p class="p1">margin-bottom:20px;</p>
+<p class="p1">flex-wrap:wrap;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.preview{</p>
+<p class="p1">height:500px;</p>
+<p class="p1">border:1px solid #ddd;</p>
+<p class="p1">background:white;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;header&gt;</p>
+<p class="p1">&lt;h1&gt;Pattern Preview Tool&lt;/h1&gt;</p>
+<p class="p1">&lt;p&gt;패턴 이미지를 드래그해서 테스트하세요&lt;/p&gt;</p>
+<p class="p1">&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="container"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="drop-area" id="dropArea"&gt;</p>
+<p class="p1">이미지를 여기로 드래그하세요</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="controls"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;label&gt;</p>
+<p class="p1">Pattern Size</p>
+<p class="p1">&lt;input type="range" id="scaleSlider" min="20" max="400" value="100"&gt;</p>
+<p class="p1">&lt;/label&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;label&gt;</p>
+<p class="p1">Background</p>
+<p class="p1">&lt;input type="color" id="bgColor" value="#ffffff"&gt;</p>
+<p class="p1">&lt;/label&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="preview" id="preview"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">const dropArea = document.getElementById("dropArea");</p>
+<p class="p1">const preview = document.getElementById("preview");</p>
+<p class="p1">const scaleSlider = document.getElementById("scaleSlider");</p>
+<p class="p1">const bgColor = document.getElementById("bgColor");</p>
+<p class="p2"><br></p>
+<p class="p1">let currentImage = null;</p>
+<p class="p2"><br></p>
+<p class="p1">dropArea.addEventListener("dragover", e=&gt;{</p>
+<p class="p1">e.preventDefault();</p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">dropArea.addEventListener("drop", e=&gt;{</p>
+<p class="p2"><br></p>
+<p class="p1">e.preventDefault();</p>
+<p class="p2"><br></p>
+<p class="p1">const file = e.dataTransfer.files[0];</p>
+<p class="p2"><br></p>
+<p class="p1">if(!file.type.startsWith("image")){</p>
+<p class="p1">alert("이미지 파일만 가능합니다");</p>
+<p class="p1">return;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">const reader = new FileReader();</p>
+<p class="p2"><br></p>
+<p class="p1">reader.onload = function(event){</p>
+<p class="p2"><br></p>
+<p class="p1">currentImage = event.target.result;</p>
+<p class="p2"><br></p>
+<p class="p1">preview.style.backgroundImage = `url(${currentImage})`;</p>
+<p class="p1">preview.style.backgroundRepeat = "repeat";</p>
+<p class="p1">preview.style.backgroundSize = scaleSlider.value + "px";</p>
+<p class="p2"><br></p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">reader.readAsDataURL(file);</p>
+<p class="p2"><br></p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">scaleSlider.addEventListener("input", ()=&gt;{</p>
+<p class="p2"><br></p>
+<p class="p1">if(currentImage){</p>
+<p class="p1">preview.style.backgroundSize = scaleSlider.value + "px";</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">bgColor.addEventListener("input", ()=&gt;{</p>
+<p class="p2"><br></p>
+<p class="p1">preview.style.backgroundColor = bgColor.value;</p>
+<p class="p2"><br></p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
