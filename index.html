@@ -1,114 +1,63 @@
 <!DOCTYPE html>
 
 <html lang="ko">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pattern Drag & Drop Viewer</title>
+<title>Pattern Lab</title>
 
 <style>
 
-:root{
---bg-size:200px;
-}
-
-html,body{
+body,html{
 margin:0;
-padding:0;
-width:100%;
 height:100%;
-font-family:-apple-system,BlinkMacSystemFont,system-ui,Roboto,sans-serif;
+font-family:-apple-system,BlinkMacSystemFont,system-ui;
+background:#ddd;
 overflow:hidden;
-background:#e5e5e5;
 }
 
 /* 패턴 배경 */
 
-#pattern-background{
+#pattern{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
 background-repeat:repeat;
-background-position:center;
-background-size:var(--bg-size);
-background-color:#e5e5e5;
-z-index:-1;
+background-size:200px;
+background-color:#ddd;
 }
 
-/* 드래그 안내 */
+/* 드롭 안내 */
 
-#drop-zone-overlay{
+#drop{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
 display:flex;
-justify-content:center;
 align-items:center;
+justify-content:center;
 border:4px dashed rgba(0,0,0,0.15);
-background:rgba(0,0,0,0.05);
-box-sizing:border-box;
-z-index:10;
-transition:opacity .3s;
-}
-
-#drop-zone-overlay.hidden{
-opacity:0;
-pointer-events:none;
-}
-
-.instruction-text{
-background:white;
-padding:18px 36px;
-border-radius:40px;
+background:rgba(255,255,255,0.3);
 font-weight:600;
 color:#555;
-box-shadow:0 4px 15px rgba(0,0,0,0.15);
+z-index:10;
 }
 
-/* 컨트롤 패널 */
+/* 패널 */
 
-.control-panel{
+.panel{
 position:fixed;
 top:20px;
 left:20px;
-background:rgba(255,255,255,0.95);
-padding:24px;
-border-radius:16px;
-box-shadow:0 8px 30px rgba(0,0,0,0.15);
-width:260px;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
 z-index:100;
-}
-
-h2{
-margin:0 0 20px 0;
-font-size:20px;
-color:#222;
-}
-
-.control-group{
-margin-bottom:20px;
-}
-
-label{
-display:block;
-font-size:13px;
-font-weight:600;
-margin-bottom:8px;
-}
-
-input[type="range"]{
-width:100%;
-}
-
-.file-info{
-font-size:12px;
-color:#777;
-line-height:1.5;
 }
 
 </style>
@@ -117,75 +66,58 @@ line-height:1.5;
 
 <body>
 
-<div id="pattern-background"></div>
+<div id="pattern"></div>
 
-<div id="drop-zone-overlay">
-<div class="instruction-text">
-패턴 이미지를 이 화면으로 드래그하세요
-</div>
+<div id="drop">
+패턴 이미지를 드래그하세요
 </div>
 
-<div class="control-panel">
+<div class="panel">
 
-<h2>Pattern Lab</h2>
-
-<div class="control-group">
-<label>Scale: <span id="scale-val">200</span>px</label>
-<input type="range" id="scale" min="20" max="1200" value="200">
-</div>
-
-<div class="file-info">
-• PNG 패턴 추천<br>
-• 포토샵 패턴 이미지 드래그<br>
-• 슬라이더로 크기 조절
-</div>
+<label>Scale</label> <br> <input type="range" id="scale" min="20" max="1000" value="200">
 
 </div>
 
 <script>
 
-const bgLayer = document.getElementById("pattern-background")
-const overlay = document.getElementById("drop-zone-overlay")
-const scaleInput = document.getElementById("scale")
-const scaleVal = document.getElementById("scale-val")
+const pattern=document.getElementById("pattern")
+const drop=document.getElementById("drop")
+const scale=document.getElementById("scale")
 
-let currentImage = null
+let image=null
 
-/* 브라우저 기본 드래그 동작 막기 */
+/* 드래그 기본동작 방지 */
 
-;["dragenter","dragover","dragleave","drop"].forEach(eventName=>{
-document.addEventListener(eventName,e=>{
-e.preventDefault()
-e.stopPropagation()
+;["dragenter","dragover","dragleave","drop"].forEach(e=>{
+document.addEventListener(e,ev=>{
+ev.preventDefault()
 })
 })
 
-/* 드롭 이벤트 */
+/* 드롭 */
 
 document.addEventListener("drop",e=>{
 
-const files = e.dataTransfer.files
+const file=e.dataTransfer.files[0]
 
-if(!files || !files[0]) return
-
-const file = files[0]
+if(!file) return
 
 if(!file.type.startsWith("image")){
 alert("이미지 파일만 가능합니다")
 return
 }
 
-const reader = new FileReader()
+const reader=new FileReader()
 
-reader.onload=function(event){
+reader.onload=function(ev){
 
-currentImage = event.target.result
+image=ev.target.result
 
-bgLayer.style.backgroundImage = `url(${currentImage})`
-bgLayer.style.backgroundRepeat = "repeat"
-bgLayer.style.backgroundSize = scaleInput.value + "px"
+pattern.style.backgroundImage=`url(${image})`
+pattern.style.backgroundRepeat="repeat"
+pattern.style.backgroundSize=scale.value+"px"
 
-overlay.classList.add("hidden")
+drop.style.display="none"
 
 }
 
@@ -193,16 +125,12 @@ reader.readAsDataURL(file)
 
 })
 
-/* 패턴 크기 조절 */
+/* 스케일 */
 
-scaleInput.addEventListener("input",e=>{
+scale.addEventListener("input",()=>{
 
-const size = e.target.value
-
-scaleVal.textContent = size
-
-if(currentImage){
-bgLayer.style.backgroundSize = size + "px"
+if(image){
+pattern.style.backgroundSize=scale.value+"px"
 }
 
 })
