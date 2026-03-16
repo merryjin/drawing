@@ -3,72 +3,27 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pattern Lab v2</title>
+<title>Pattern Lab PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
-html,body{
+body{
 margin:0;
-height:100%;
 font-family:-apple-system,BlinkMacSystemFont,system-ui;
-background:#ddd;
-overflow:hidden;
+background:#eee;
 }
 
-#canvas{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#ddd;
-background-repeat:repeat;
-}
-
-#grid{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-background-image:
-linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-background-size:200px 200px;
-display:none;
-}
-
-#drop{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+.wrapper{
 display:flex;
-align-items:center;
-justify-content:center;
-border:4px dashed rgba(0,0,0,0.2);
-font-weight:600;
-color:#555;
-background:rgba(255,255,255,0.3);
+height:100vh;
 }
 
 .panel{
-position:fixed;
-top:20px;
-left:20px;
 width:260px;
 background:white;
 padding:20px;
-border-radius:14px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
-
-.panel h2{
-margin:0 0 15px;
-font-size:18px;
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
 }
 
 .control{
@@ -78,22 +33,81 @@ margin-bottom:14px;
 label{
 font-size:12px;
 font-weight:600;
-display:block;
-margin-bottom:5px;
 }
 
-input[type=range]{
+input,select{
 width:100%;
+margin-top:4px;
 }
 
 button{
-margin-top:5px;
-padding:8px 12px;
+width:100%;
+padding:8px;
+margin-top:6px;
 border:none;
-border-radius:6px;
 background:#333;
 color:white;
-cursor:pointer;
+border-radius:6px;
+}
+
+.workspace{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.tileView{
+height:200px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#fafafa;
+border-bottom:1px solid #ddd;
+}
+
+.patternView{
+flex:1;
+position:relative;
+background:#ddd;
+}
+
+canvas{
+display:block;
+}
+
+#grid{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+
+background-image:
+linear-gradient(rgba(0,0,0,0.15) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,0,0,0.15) 1px, transparent 1px);
+
+background-size:200px 200px;
+
+display:none;
+}
+
+#drop{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:22px;
+font-weight:600;
+
+border:4px dashed rgba(0,0,0,0.2);
+background:rgba(255,255,255,0.5);
 }
 
 </style>
@@ -102,102 +116,120 @@ cursor:pointer;
 
 <body>
 
-<div id="canvas"></div>
-<div id="grid"></div>
-
-<div id="drop">
-패턴 이미지를 드래그하거나 클릭하세요
-<input type="file" id="file" hidden accept="image/*">
-</div>
+<div class="wrapper">
 
 <div class="panel">
 
-<h2>Pattern Lab v2</h2>
+<h3>Pattern Lab PRO</h3>
 
 <div class="control">
-<label>Scale</label>
-<input type="range" id="scale" min="20" max="1000" value="200">
+<label>Upload Pattern</label>
+<input type="file" id="upload" accept="image/*">
 </div>
 
 <div class="control">
-<label>Rotation</label>
-<input type="range" id="rotate" min="0" max="360" value="0">
+<label>Scale</label>
+<input type="range" id="scale" min="50" max="300" value="150">
 </div>
 
 <div class="control">
 <label>Offset X</label>
-<input type="range" id="offsetX" min="0" max="500" value="0">
+<input type="range" id="offsetX" min="0" max="200" value="0">
 </div>
 
 <div class="control">
 <label>Offset Y</label>
-<input type="range" id="offsetY" min="0" max="500" value="0">
+<input type="range" id="offsetY" min="0" max="200" value="0">
+</div>
+
+<div class="control">
+<label>Repeat Mode</label>
+<select id="repeatMode">
+<option value="basic">Basic</option>
+<option value="half">Half Drop</option>
+<option value="brick">Brick</option>
+</select>
 </div>
 
 <div class="control">
 <label>Background</label>
-<input type="color" id="bg" value="#dddddd">
+<input type="color" id="bgColor" value="#dddddd">
 </div>
 
-<div class="control">
-<button id="gridBtn">Grid Toggle</button>
+<button id="toggleGrid">Grid Toggle</button> <button id="exportBtn">Export PNG</button>
+
 </div>
 
-<div class="control">
-<button id="export">Export PNG</button>
+<div class="workspace">
+
+<div class="tileView">
+<canvas id="tileCanvas" width="180" height="180"></canvas>
+</div>
+
+<div class="patternView">
+
+<canvas id="patternCanvas"></canvas>
+
+<div id="grid"></div>
+
+<div id="drop">이미지를 업로드하세요</div>
+
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-const canvas=document.getElementById("canvas")
-const drop=document.getElementById("drop")
-const fileInput=document.getElementById("file")
-const grid=document.getElementById("grid")
+const upload=document.getElementById("upload")
+const patternCanvas=document.getElementById("patternCanvas")
+const tileCanvas=document.getElementById("tileCanvas")
+
+const ctx=patternCanvas.getContext("2d")
+const tileCtx=tileCanvas.getContext("2d")
 
 const scale=document.getElementById("scale")
-const rotate=document.getElementById("rotate")
 const offsetX=document.getElementById("offsetX")
 const offsetY=document.getElementById("offsetY")
-const bg=document.getElementById("bg")
+const repeatMode=document.getElementById("repeatMode")
+const bgColor=document.getElementById("bgColor")
+
+const drop=document.getElementById("drop")
 
 let img=null
 
-/* drag 방지 */
+function resizeCanvas(){
 
-;["dragenter","dragover","dragleave","drop"].forEach(e=>{
-document.addEventListener(e,ev=>{
-ev.preventDefault()
-})
-})
+patternCanvas.width=patternCanvas.parentElement.clientWidth
+patternCanvas.height=patternCanvas.parentElement.clientHeight
 
-drop.addEventListener("click",()=>{
-fileInput.click()
-})
+draw()
 
-fileInput.addEventListener("change",e=>{
-loadFile(e.target.files[0])
-})
+}
 
-document.addEventListener("drop",e=>{
-loadFile(e.dataTransfer.files[0])
-})
+window.addEventListener("resize",resizeCanvas)
 
-function loadFile(file){
+upload.onchange=e=>{
+
+const file=e.target.files[0]
 
 if(!file) return
-if(!file.type.startsWith("image")) return
 
 const reader=new FileReader()
 
-reader.onload=function(e){
+reader.onload=function(ev){
 
-img=e.target.result
+img=new Image()
 
-updatePattern()
+img.onload=function(){
 
 drop.style.display="none"
+draw()
+
+}
+
+img.src=ev.target.result
 
 }
 
@@ -205,47 +237,76 @@ reader.readAsDataURL(file)
 
 }
 
-function updatePattern(){
+function draw(){
 
 if(!img) return
 
-canvas.style.backgroundImage=`url(${img})`
-canvas.style.backgroundSize=scale.value+"px"
-canvas.style.backgroundPosition=offsetX.value+"px "+offsetY.value+"px"
+const w=patternCanvas.width
+const h=patternCanvas.height
 
-canvas.style.transform=`rotate(${rotate.value}deg)`
+ctx.fillStyle=bgColor.value
+ctx.fillRect(0,0,w,h)
 
-grid.style.backgroundSize=scale.value+"px "+scale.value+"px"
+const size=Number(scale.value)
+
+tileCtx.clearRect(0,0,180,180)
+tileCtx.drawImage(img,0,0,180,180)
+
+for(let x=-size;x<w+size;x+=size){
+
+for(let y=-size;y<h+size;y+=size){
+
+let dx=x+Number(offsetX.value)
+let dy=y+Number(offsetY.value)
+
+if(repeatMode.value==="half"){
+
+if(Math.floor(x/size)%2===0) dy+=size/2
 
 }
 
-scale.oninput=updatePattern
-rotate.oninput=updatePattern
-offsetX.oninput=updatePattern
-offsetY.oninput=updatePattern
+if(repeatMode.value==="brick"){
 
-bg.oninput=()=>{
-canvas.style.backgroundColor=bg.value
+if(Math.floor(y/size)%2===0) dx+=size/2
+
 }
 
-document.getElementById("gridBtn").onclick=()=>{
-grid.style.display=grid.style.display=="none"?"block":"none"
+ctx.drawImage(img,dx,dy,size,size)
+
 }
 
-document.getElementById("export").onclick=()=>{
+}
 
-html2canvas(document.body).then(canvas=>{
+}
+
+scale.oninput=draw
+offsetX.oninput=draw
+offsetY.oninput=draw
+repeatMode.onchange=draw
+bgColor.oninput=draw
+
+document.getElementById("toggleGrid").onclick=()=>{
+
+const grid=document.getElementById("grid")
+
+grid.style.display=grid.style.display==="none"?"block":"none"
+
+}
+
+document.getElementById("exportBtn").onclick=()=>{
+
 const link=document.createElement("a")
+
 link.download="pattern.png"
-link.href=canvas.toDataURL()
+link.href=patternCanvas.toDataURL()
+
 link.click()
-})
 
 }
+
+resizeCanvas()
 
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </body>
 </html>
