@@ -1,194 +1,143 @@
-<html>
+<!DOCTYPE html>
+
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pattern Drag & Drop Viewer</title>
-    <style>
-        :root {
-            --bg-size: 200px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pattern Drag & Drop Viewer</title>
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            overflow: hidden;
-        }
+<style>
 
-        /* 패턴 배경 */
-        #pattern-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-repeat: repeat;
-            background-size: var(--bg-size);
-            background-position: center;
-            z-index: -1;
-            background-color: #e5e5e5;
-            transition: background-image 0.3s ease;
-        }
+:root {
+--bg-size: 200px;
+}
 
-        /* 드래그 유도 안내 문구 */
-        #drop-zone-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.05);
-            border: 4px dashed rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            z-index: 10;
-            pointer-events: none; /* 클릭 방해 금지 */
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
+body, html {
+margin: 0;
+padding: 0;
+width: 100%;
+height: 100%;
+font-family: -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+overflow: hidden;
+}
 
-        #drop-zone-overlay.hidden {
-            opacity: 0;
-        }
+/* 패턴 배경 */
 
-        .instruction-text {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            color: #555;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+#pattern-background {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-repeat: repeat;
+background-size: var(--bg-size);
+background-position: center;
+z-index: -1;
+background-color: #e5e5e5;
+transition: background-image 0.3s ease;
+}
 
-        /* 컨트롤 패널 */
-        .control-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
-            width: 260px;
-            z-index: 100;
-        }
+/* 드래그 안내 */
 
-        h2 { margin: 0 0 20px 0; font-size: 20px; color: #222; letter-spacing: -0.5px; }
-        
-        .control-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #444; }
-        
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            background: #ddd;
-            border-radius: 5px;
-            outline: none;
-            -webkit-appearance: none;
-        }
+#drop-zone-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+background: rgba(0,0,0,0.05);
+border: 4px dashed rgba(0,0,0,0.1);
+box-sizing: border-box;
+z-index: 10;
+pointer-events: none;
+opacity: 1;
+transition: opacity 0.3s;
+}
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #333;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+#drop-zone-overlay.hidden {
+opacity: 0;
+}
 
-        .file-info {
-            font-size: 12px;
-            color: #888;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-    </style>
+.instruction-text {
+background: rgba(255,255,255,0.8);
+padding: 20px 40px;
+border-radius: 50px;
+font-weight: bold;
+color: #555;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 컨트롤 패널 */
+
+.control-panel {
+position: fixed;
+top: 20px;
+left: 20px;
+background: rgba(255,255,255,0.95);
+padding: 24px;
+border-radius: 16px;
+box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+backdrop-filter: blur(10px);
+width: 260px;
+z-index: 100;
+}
+
+h2 {
+margin: 0 0 20px 0;
+font-size: 20px;
+color: #222;
+}
+
+.control-group {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+font-size: 13px;
+font-weight: 600;
+margin-bottom: 10px;
+color: #444;
+}
+
+input[type="range"] {
+width: 100%;
+height: 6px;
+background: #ddd;
+border-radius: 5px;
+outline: none;
+-webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+background: #333;
+border-radius: 50%;
+cursor: pointer;
+}
+
+.file-info {
+font-size: 12px;
+color: #888;
+margin-top: 10px;
+line-height: 1.5;
+}
+
+</style>
+
 </head>
+
 <body>
 
-    <div id="pattern-background"></div>
+<div id="pattern-background"></div>
 
-    <div id="drop-zone-overlay">
-        <div class="instruction-text">이곳에 패턴 이미지를 드래그하세요</div>
-    </div>
+<div id="drop-zone-overlay">
+<div class="instruction-text">이곳에 패턴 이미지를 드래그하세요</div>
+</div>
 
-    <div class="control-panel">
-        <h2>Pattern Lab</h2>
-        
-        <div class="control-group">
-            <label for="scale">Scale: <span id="scale-val">200</span>px</label>
-            <input type="range" id="scale" min="20" max="1200" value="200">
-        </div>
-
-        <div class="file-info">
-            • 포토샵 패턴 이미지를 던져넣으세요.<br>
-            • 배경 투명 PNG 권장<br>
-            • 슬라이더로 크기 조절
-        </div>
-    </div>
-
-    <script>
-        const bgLayer = document.getElementById('pattern-background');
-        const overlay = document.getElementById('drop-zone-overlay');
-        const scaleInput = document.getElementById('scale');
-        const scaleVal = document.getElementById('scale-val');
-
-        // 드래그 이벤트 방지 (브라우저가 파일을 열어버리는 것 방지)
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            document.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        // 드래그 중 효과
-        ['dragenter', 'dragover'].forEach(eventName => {
-            document.addEventListener(eventName, () => {
-                overlay.style.background = "rgba(0, 0, 0, 0.1)";
-                overlay.classList.remove('hidden');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            document.addEventListener(eventName, () => {
-                overlay.style.background = "rgba(0, 0, 0, 0.05)";
-            }, false);
-        });
-
-        // 파일 드롭 처리
-        document.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-
-            if (files && files[0]) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        bgLayer.style.backgroundImage = `url('${event.target.result}')`;
-                        overlay.classList.add('hidden'); // 이미지 들어오면 가이드 숨김
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-        }
-
-        // 크기 조절
-        scaleInput.addEventListener('input', (e) => {
-            const size = e.target.value;
-            scaleVal.textContent = size;
-            document.documentElement.style.setProperty('--bg-size', `${size}px`);
-        });
-    </script>
-</body>
-</html>
+<div class="c
